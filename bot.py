@@ -85,7 +85,6 @@ def prompt(username, question):
 
     return generated_reply
 
-
 def chat(question, user):
     client = FaunaClient(
         secret=os.getenv('FAUNA_SECRET_KEY')

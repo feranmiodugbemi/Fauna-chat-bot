@@ -4,6 +4,7 @@ from faunadb.objects import Ref
 from faunadb.client import FaunaClient
 import openai
 from dotenv import load_dotenv
+import json
 import os
 load_dotenv()
 bot = telebot.TeleBot(os.getenv("BOT_SECRET"))
@@ -26,9 +27,6 @@ def prompt(username, question):
             }
         )
     )
-    
-    
-    
     index_name = "users_messages_by_username"
     username = username
     # Paginate over all the documents in the collection using the index
@@ -49,23 +47,22 @@ def prompt(username, question):
     openai.api_key = os.getenv('OPENAI_SECRET_KEY')
 
     # Define the assistant's persona in a system message
-    system_message = "Assistant: A helpful assistant that provides accurate information."
+    system_message = {"role":"system", "content" : "A helpful assistant that provides accurate information."}
 
     # Construct the conversation prompt with user messages and the system message
-    conversation_prompt = "\n".join([f"User: {message['content']}\nAssistant:" for message in messages])
-
-    # Prepend the system message to the conversation prompt
-    prompt_with_persona = f"{system_message}\n{conversation_prompt}"
+    prompt_with_persona = [system_message] + [
+        {"role": "user", "content": message["content"]} if message["role"] == "user"
+        else {"role": "assistant", "content": message["content"]} for message in messages
+    ]
 
     # Generate a response from the model
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt_with_persona,
-        max_tokens=50  # Adjust the desired response length
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=prompt_with_persona
     )
 
     # Extract the generated reply from the API response
-    generated_reply = response.choices[0]["text"]
+    generated_reply = response["choices"][0]["message"]["content"]
     
     newdata = {
         "username": username,
@@ -101,8 +98,24 @@ def chat(question, user):
         return "🌿🤖 Hello! Welcome to the fauna and gpt3 powered bot! 🌟💫\nThis user is not logged in , type /start or click on it to login"
 
 
-def image(image):
-    return image
+def image(prompt, user):
+    client = FaunaClient(
+        secret=os.getenv('FAUNA_SECRET_KEY')
+    )
+    userid = user.from_user.id
+    openai.api_key = os.getenv('OPENAI_SECRET_KEY')
+    user_exists = client.query(
+        q.exists(q.match(q.index("users_by_id"), userid)))
+    if user_exists:
+        generated_image = openai.Image.create(
+            prompt=prompt,
+            n=1,
+            size="1024x1024"
+        )
+        image_url = generated_image['data'][0]['url']
+        return image_url
+    else:
+        return "🌿🤖 Hello! Welcome to the fauna and gpt3 powered bot! 🌟💫\nThis user is not logged in , type /start or click on it to login"
 
 
 def reset():
@@ -174,9 +187,11 @@ def echo_all(message):
         user_state[message.chat.id] = None
 
     elif message.chat.id in user_state and user_state[message.chat.id] == 'image':
-        chat_image = message.text
-        bot.reply_to(message, chat(chat_image))
+        image_prompt = message.text
+        user = message
+        bot.reply_to(message, image(image_prompt, user))
         user_state[message.chat.id] = 'image'
+        bot.send_message(message.chat.id, "What Image are you creating again?")
 
     elif message.chat.id in user_state and user_state[message.chat.id] == 'reset':
         chat_reset = message.text

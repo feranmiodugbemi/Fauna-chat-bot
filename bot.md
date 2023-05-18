@@ -63,6 +63,7 @@ A Telegram bot is an automated program that operates within the Telegram messagi
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3fm6sgbv35v25m4ug90m.png)
 **Conversation with BotFather**
 To create a new bot with BotFather, we will use the **/newbot** and then supply the name of our bot and we'll then be given our bot `API KEY` which is the HTTP API access token in the image. We will the store our token key in our `.env` file in a `BOT_SECRET` variable. Now, we can now fully proceed to writing code🤩.
+
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/nngcpknnt2f34qd92bmj.jpg)
 ![BotFather](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/y1v0rvjtbr0hz8g88uvz.png)
 

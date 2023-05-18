@@ -58,10 +58,13 @@ After getting the `API KEY`, store it in the `.env` file we created earlier in a
 A Telegram bot is an automated program that operates within the Telegram messaging platform. It is designed to interact with users and perform various tasks, such as providing information, delivering updates, answering queries, and executing commands. These bots are created using Telegram's Bot API and can be integrated into group chats or used in one-on-one conversations.
 
 **Conversation with BotFather**
+
 **BotFather** is an essential bot created by the developers of Telegram for creating and managing other bots on the Telegram platform. To interact with **BotFather**, we need to have a Telegram account. We can search for **"@BotFather"** in the Telegram app to initiate a conversation.
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3fm6sgbv35v25m4ug90m.png)
+
 **Conversation with BotFather**
+
 To create a new bot with BotFather, we will use the **/newbot** and then supply the name of our bot and we'll then be given our bot `API KEY` which is the HTTP API access token in the image. We will the store our token key in our `.env` file in a `BOT_SECRET` variable. Now, we can now fully proceed to writing code🤩.
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/nngcpknnt2f34qd92bmj.jpg)

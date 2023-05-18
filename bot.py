@@ -82,6 +82,8 @@ def prompt(username, question):
 
     return generated_reply
 
+
+
 def chat(question, user):
     client = FaunaClient(
         secret=os.getenv('FAUNA_SECRET_KEY')
@@ -118,8 +120,7 @@ def image(prompt, user):
         return "🌿🤖 Hello! Welcome to the fauna and gpt3 powered bot! 🌟💫\nThis user is not logged in , type /start or click on it to login"
 
 
-def reset():
-    return
+
 
 
 print("Started.........")
@@ -149,29 +150,27 @@ def start_message(message):
                 }
             )
         )
-    bot.reply_to(
-        message, "🌿🤖 Hello! Welcome to the fauna and gpt3 powered bot! 🌟💫\nTo begin, type /chat or click on it")
+    bot.reply_to(message, "🌿🤖 Hello! Welcome to the fauna and gpt3 powered bot! 🌟💫\nTo begin, type /chat or click on it")
 
 
 @bot.message_handler(commands=['chat'])
-def help_message(message):
+def chat_message(message):
     # Set the user's state to 'help' and output a help message
     user_state[message.chat.id] = 'chat'
     bot.reply_to(message, "Hello, how may i help you: ")
+    
+    
+    
 
 
 @bot.message_handler(commands=['image'])
-def help_message(message):
+def image_message(message):
     # Set the user's state to 'help' and output a help message
     user_state[message.chat.id] = 'image'
     bot.reply_to(message, "What kind of image are you creating today: ")
 
 
-@bot.message_handler(commands=['reset'])
-def help_message(message):
-    # Set the user's state to 'help' and output a help message
-    user_state[message.chat.id] = 'reset'
-    bot.reply_to(message, "Resetting chat......... ")
+
 
 
 @bot.message_handler(func=lambda message: True)
@@ -193,10 +192,8 @@ def echo_all(message):
         user_state[message.chat.id] = 'image'
         bot.send_message(message.chat.id, "What Image are you creating again?")
 
-    elif message.chat.id in user_state and user_state[message.chat.id] == 'reset':
-        chat_reset = message.text
-        bot.reply_to(message, reset())
-        user_state[message.chat.id] = None
+    
+
 
 
 bot.polling()
